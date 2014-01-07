@@ -3,14 +3,21 @@
   "author": "Anton Savenko <anton.a.savenko@gmail.com>",
   "description": "A simple wiki that uses markdown files",
   "version": "0.0.1",
-  "private": true,
+  "license": "HZ",
   "scripts": {
     "start": "node app.js"
+  },
+  "engines": {
+    "node": ">=0.6.x"
   },
   "dependencies": {
     "express": "3.4.7",
     "jade": "*",
     "marked": "*",
     "highlight.js": "*"
+  },
+  "repository": {
+      "type": "git",
+      "url": "git://git@github.com:Jinnmv/web-doc.git"
   }
 }
