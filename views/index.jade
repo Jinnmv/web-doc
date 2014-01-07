@@ -1,0 +1,25 @@
+extends layout
+
+block content
+  header
+    h1= title
+  hr
+  
+  if dirs
+    ul
+      for dir in dirs
+        li
+          b= dir
+  
+  if files
+    ul
+      for file in files
+        li= file
+    hr
+  
+  if indexMd
+    p!= indexMd
+    hr
+    
+    p Last Modified: #{mtime}
+    hr
