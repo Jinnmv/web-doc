@@ -14,7 +14,8 @@
     "express": "3.4.7",
     "jade": "*",
     "marked": "*",
-    "highlight.js": "*"
+    "highlight.js": "*",
+    "socket.io": "0.9.x"
   },
   "repository": {
       "type": "git",

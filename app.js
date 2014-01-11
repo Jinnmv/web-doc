@@ -12,7 +12,8 @@ var http = require('http');
 var path = require('path');
 var dirContent = require('./lib/dirContent');
 var marked = require('marked');
-//var socketio = require("socket.io");
+var socketio = require("socket.io");
+//var urlrewrite = require('express-rewrite');
 
 var app = module.exports = express();
 
@@ -59,3 +60,12 @@ var server = http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
 
+io = socketio.listen(server);
+io.set('log level', 2);
+
+io.sockets.on('connection', function (socket){
+
+    socket.on('disconnect', function(){
+
+  });
+});
