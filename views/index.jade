@@ -5,21 +5,13 @@ block content
     h1= title
   hr
   
-  if dirs
-    ul
-      for dir in dirs
-        li
-          b= dir
+  #nav
+    #nav-back
+    ul#nav-dirs
+    ul#nav-files
+  hr
   
-  if files
-    ul
-      for file in files
-        li= file
-    hr
-  
-  if indexMd
-    p!= indexMd
-    hr
+  #doc
+  hr
     
-    p Last Modified: #{mtime}
-    hr
+  #doc-footer
