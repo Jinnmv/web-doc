@@ -42,18 +42,146 @@ if ('development' == app.get('env')) {
 }
 
 
-var startDir = "doc";
+var startDir = "doc"; // TODO put into config
 
 //app.get('/', routes.index);
-app.get('/', function(req, res){
-  console.log(dirContent.getDirs("doc"));
-  console.log(dirContent.getFiles("doc"));
-  console.log("Reguest:", req);
+/*app.get('/', function(req, res, next){
   res.render('index', { title: 'Web Doc',
                        dirs: dirContent.getDirs("doc"),
                        files: dirContent.getFiles("doc"),
                        mtime: fs.statSync("./doc/index.md").mtime});
+});*/
+
+// TODO move app.get to rotes
+// TODO use of path:
+//    path.dirname('/foo/bar/baz/asdf/quux')
+//    returns
+//      '/foo/bar/baz/asdf'
+
+//    path.basename('/foo/bar/baz/asdf/quux.html')
+//    returns
+//      'quux.html'
+//    path.basename('/foo/bar/baz/asdf/quux.html', '.html')
+//    returns
+//      'quux'
+
+//    An example on *nix:
+//    'foo/bar/baz'.split(path.sep)
+//    returns
+//      ['foo', 'bar', 'baz']
+//    An example on Windows:
+//    'foo\\bar\\baz'.split(path.sep)
+//    returns
+//      ['foo', 'bar', 'baz']
+
+app.get('/*', function(req, res, next){
+  //console.log('>> req.url:', req.url);
+  if (req.url.slice(-1) === '/') {
+
+    // Url points to Directory
+    fs.exists(startDir + req.url, function(exists){
+      if (exists) {
+
+        // Async check for path is Directory
+        fs.stat(startDir + req.url, function(err, stat) {
+          if (stat && stat.isDirectory()) {
+            console.log('### Found Doc directory by URL', startDir + req.url);
+            renderPageIndex(res, req.url, startDir);
+          } else {
+            console.log('### URL:', startDir + req.url, 'is not doc dir');
+            res.redirect('/');
+          }
+        });
+
+      } else {
+        console.log('### Doc Directory', startDir + req.url, 'not found!');
+        res.redirect('/');
+      }
+    });
+
+  } else {
+
+    // Url points to File
+    fs.exists(startDir + req.url + '.md', function(exists){
+      if (exists) {
+        console.log('###Found Doc file: ', startDir + req.url + '.md');
+        renderPageFile(res, req.url, startDir, startDir + req.url + '.md');
+      } else {
+
+        fs.exists(__dirname + '/public' + req.url, function(exists){
+          if (exists) {
+            next();
+          } else {
+            // not existing file requested -> redirect to root
+            res.redirect('/');
+          }
+        });
+
+
+      }
+    });
+  }
+
+
 });
+
+var renderPageIndex = function (res, reqUrl, startDir ) {
+  var currentDir = startDir + reqUrl;
+  var indexFileName = 'index.md'; // TODO: move to config
+
+  console.log('@@@renderPageIndex reqUrl:', reqUrl, 'startDir:', startDir, 'fileName:', indexFileName, 'currentDir:', currentDir, 'prevDir:',  reqUrl.replace(/([^\/]*\/)$/,''));
+
+  // Async check for index file exist in current dir
+  fs.exists(currentDir + indexFileName, function(exists) {
+    if (exists) {
+      fs.stat(currentDir + indexFileName, function(err, stats) {
+        if (stats && stats.isFile()) {
+          console.log('### Index file', indexFileName, 'found in dir', currentDir);
+          res.render('index', {title: 'Web Doc Dir',
+                               dirs: dirContent.getDirs(currentDir),
+                               files: dirContent.getFiles(currentDir),
+                               currentDir: reqUrl,
+                               prevDir: reqUrl.replace(/([^\/]*\/)$/,''),
+                               doc: marked(fs.readFileSync(currentDir + indexFileName, 'utf-8'))});
+        } else {
+          console.log('###',indexFileName, 'Is not a file');
+          res.render('index', {title: 'Web Doc Dir',
+                               dirs: dirContent.getDirs(currentDir),
+                               files: dirContent.getFiles(currentDir),
+                               currentDir: reqUrl,
+                               prevDir: reqUrl.replace(/([^\/]*\/)$/,'')});
+        }
+      });
+    } else {
+      console.log('### No Idex file found in dir', currentDir);
+      res.render('index', { title: 'Web Doc Dir',
+                            dirs: dirContent.getDirs(currentDir),
+                            files: dirContent.getFiles(currentDir),
+                            currentDir: reqUrl,
+                            prevDir: reqUrl.replace(/([^\/]*\/)$/,'')});
+    }
+  });
+
+
+
+}
+
+var renderPageFile = function (res, reqUrl, startDir, fileName) {
+  console.log('@@@renderPageFile reqUrl:', reqUrl, 'startDir:', startDir, 'fileName:', fileName, 'req Replace:', reqUrl.replace(/([^\/]*)$/,''));
+
+  var currentDir = startDir + reqUrl.replace(/([^\/]*)$/,'');
+
+  fs.stat(fileName, function(err, stats) {
+    if (stats.isFile()) {
+        res.render('index', {title: 'Web Doc Dir',
+                   dirs: dirContent.getDirs(currentDir),
+                   files: dirContent.getFiles(currentDir),
+                   currentDir: reqUrl.replace(/([^\/]*)$/,''),
+                   prevDir: reqUrl.replace(/([^\/]*)$/,'').replace(/([^\/]*\/)$/,''),
+                   doc: fileName ? marked(fs.readFileSync(fileName, 'utf-8')) : null});
+    }
+  });
+}
 
 //app.get('/users', user.list);
 
@@ -64,6 +192,7 @@ var server = http.createServer(app).listen(app.get('port'), function(){
 io = socketio.listen(server);
 io.set('log level', 2);
 
+// ***   Socket.io   ***
 io.sockets.on('connection', function (socket){
   var prevDir = '';
   var currentDir = '';
@@ -116,12 +245,12 @@ io.sockets.on('connection', function (socket){
     dirs = dirContent.getDirs(dirName);
     files = dirContent.getFiles(dirName);
     indexFile = (files.indexOf("index.md") != -1); // if 'index.md' is in current dir;
-    console.log('Curren Dir:', dirName);
+    /*console.log('Curren Dir:', dirName);
     console.log('Prev Dir:', prevDir);
     console.log('dirs', dirs);
-    console.log('files', files);
+    console.log('files', files);*/
 
-
+/*
     socket.emit('renderNav', { dirs: dirs,
                                files: files,
                                prevDir: prevDir,
@@ -131,7 +260,7 @@ io.sockets.on('connection', function (socket){
       sendMdFile('index.md');
     } else {
       socket.emit('renderDoc', { doc: ''});
-    }
+    }*/
   }
 
   function sendMdFile(fileName) {

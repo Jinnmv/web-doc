@@ -2,16 +2,38 @@ extends layout
 
 block content
   header
-    h1= title
+    h1= currentDir
   hr
   
   #nav
     #nav-back
+
+    if prevDir
+      #nav-back-extra
+        a(href='#{prevDir}') Back
+
     ul#nav-dirs
     ul#nav-files
+
+    ul#nav-dirs-extra
+      if dirs
+        for dir in dirs
+          li
+            b
+              a(href='#{currentDir}#{dir}/') #{dir}
+
+    ul#nav-files-extra
+      if files
+        for file in files
+          li
+            a(href='#{currentDir}#{file}') #{file}
+
   hr
   
   #doc
-  hr
-    
+
+  if doc
+    #doc-extra!= doc
+    hr
+
   #doc-footer

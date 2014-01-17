@@ -1,6 +1,6 @@
 $(document).ready(function(){
 
-  var socket = io.connect();
+  /*var socket = io.connect();
   socket.on('connect', function(){
     console.log("connected");
 
@@ -16,7 +16,7 @@ $(document).ready(function(){
     });
 
 
-  });
+  });*/
 
   $(document).on('click', '#nav-files a', function(fileLink){
     socket.emit('readDoc', { fileName: fileLink.currentTarget.attributes['value'].value });
