@@ -129,7 +129,7 @@ var renderPageIndex = function (res, reqUrl, docDir ) {
   var currentDir = path.join(docDir, reqUrl);
   var indexFileName = path.join(currentDir, 'index.md'); // TODO: move to config
 
-  console.log('@@@renderPageIndex reqUrl:', reqUrl, 'docDir:', docDir, 'fileName:', indexFileName, 'currentDir:', currentDir, 'prevDir:', getParentDir(reqUrl));
+  console.log('@@@renderPageIndex reqUrl:', reqUrl, 'docDir:', docDir, 'fileName:', indexFileName, 'currentDir:', currentDir, 'prevDir:', getDirParent(reqUrl));
 
   // Async check for index file exist in current dir
   fs.exists(indexFileName, function(exists) {
@@ -141,7 +141,7 @@ var renderPageIndex = function (res, reqUrl, docDir ) {
                                dirs: dirContent.getDirs(currentDir),
                                files: dirContent.getFiles(currentDir),
                                currentDir: reqUrl,
-                               prevDir: getParentDir(reqUrl),
+                               prevDir: getDirParent(reqUrl),
                                doc: marked(fs.readFileSync(indexFileName, 'utf-8'))});
         } else {
           console.log('###',indexFileName, 'Is not a file');
@@ -149,7 +149,7 @@ var renderPageIndex = function (res, reqUrl, docDir ) {
                                dirs: dirContent.getDirs(currentDir),
                                files: dirContent.getFiles(currentDir),
                                currentDir: reqUrl,
-                               prevDir: getParentDir(reqUrl)});
+                               prevDir: getDirParent(reqUrl)});
         }
       });
     } else {
@@ -158,7 +158,7 @@ var renderPageIndex = function (res, reqUrl, docDir ) {
                             dirs: dirContent.getDirs(currentDir),
                             files: dirContent.getFiles(currentDir),
                             currentDir: reqUrl,
-                            prevDir: getParentDir(reqUrl)});
+                            prevDir: getDirParent(reqUrl)});
     }
   });
 }
@@ -174,14 +174,14 @@ var renderPageFile = function (res, reqUrl, docDir, fileName) {
                    dirs: dirContent.getDirs(currentDir),
                    files: dirContent.getFiles(currentDir),
                    currentDir: getFileDir(reqUrl),
-                   prevDir: getParentDir(getFileDir(reqUrl)),
+                   prevDir: getDirParent(getFileDir(reqUrl)),
                    doc: marked(fs.readFileSync(fileName, 'utf-8'))});
     }
   });
 }
 
 // path extension
-var getParentDir = function(dirPath) {
+var getDirParent = function(dirPath) {
   return dirPath.replace(/([^\/]*\/)$/,'') //cuts last dir xx/yy/zz/ -> xx/yy/
 }
 
