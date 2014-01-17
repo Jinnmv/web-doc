@@ -42,7 +42,7 @@ if ('development' == app.get('env')) {
 }
 
 
-var startDir = "doc"; // TODO put into config
+var docDir = "doc"; // TODO put into config
 
 //app.get('/', routes.index);
 /*app.get('/', function(req, res, next){
@@ -79,22 +79,22 @@ app.get('/*', function(req, res, next){
   if (req.url.slice(-1) === '/') {
 
     // Url points to Directory
-    fs.exists(startDir + req.url, function(exists){
+    fs.exists(docDir + req.url, function(exists){
       if (exists) {
 
         // Async check for path is Directory
-        fs.stat(startDir + req.url, function(err, stat) {
+        fs.stat(docDir + req.url, function(err, stat) {
           if (stat && stat.isDirectory()) {
-            console.log('### Found Doc directory by URL', startDir + req.url);
-            renderPageIndex(res, req.url, startDir);
+            console.log('### Found Doc directory by URL', docDir + req.url);
+            renderPageIndex(res, req.url, docDir);
           } else {
-            console.log('### URL:', startDir + req.url, 'is not doc dir');
+            console.log('### URL:', docDir + req.url, 'is not doc dir');
             res.redirect('/');
           }
         });
 
       } else {
-        console.log('### Doc Directory', startDir + req.url, 'not found!');
+        console.log('### Doc Directory', docDir + req.url, 'not found!');
         res.redirect('/');
       }
     });
@@ -102,10 +102,10 @@ app.get('/*', function(req, res, next){
   } else {
 
     // Url points to File
-    fs.exists(startDir + req.url + '.md', function(exists){
+    fs.exists(docDir + req.url + '.md', function(exists){
       if (exists) {
-        console.log('###Found Doc file: ', startDir + req.url + '.md');
-        renderPageFile(res, req.url, startDir, startDir + req.url + '.md');
+        console.log('###Found Doc file: ', docDir + req.url + '.md');
+        renderPageFile(res, req.url, docDir, docDir + req.url + '.md');
       } else {
 
         fs.exists(__dirname + '/public' + req.url, function(exists){
@@ -125,31 +125,31 @@ app.get('/*', function(req, res, next){
 
 });
 
-var renderPageIndex = function (res, reqUrl, startDir ) {
-  var currentDir = startDir + reqUrl;
-  var indexFileName = 'index.md'; // TODO: move to config
+var renderPageIndex = function (res, reqUrl, docDir ) {
+  var currentDir = path.join(docDir, reqUrl);
+  var indexFileName = path.join(currentDir, 'index.md'); // TODO: move to config
 
-  console.log('@@@renderPageIndex reqUrl:', reqUrl, 'startDir:', startDir, 'fileName:', indexFileName, 'currentDir:', currentDir, 'prevDir:',  reqUrl.replace(/([^\/]*\/)$/,''));
+  console.log('@@@renderPageIndex reqUrl:', reqUrl, 'docDir:', docDir, 'fileName:', indexFileName, 'currentDir:', currentDir, 'prevDir:', getParentDir(reqUrl));
 
   // Async check for index file exist in current dir
-  fs.exists(currentDir + indexFileName, function(exists) {
+  fs.exists(indexFileName, function(exists) {
     if (exists) {
-      fs.stat(currentDir + indexFileName, function(err, stats) {
+      fs.stat(indexFileName, function(err, stats) {
         if (stats && stats.isFile()) {
           console.log('### Index file', indexFileName, 'found in dir', currentDir);
           res.render('index', {title: 'Web Doc Dir',
                                dirs: dirContent.getDirs(currentDir),
                                files: dirContent.getFiles(currentDir),
                                currentDir: reqUrl,
-                               prevDir: reqUrl.replace(/([^\/]*\/)$/,''),
-                               doc: marked(fs.readFileSync(currentDir + indexFileName, 'utf-8'))});
+                               prevDir: getParentDir(reqUrl),
+                               doc: marked(fs.readFileSync(indexFileName, 'utf-8'))});
         } else {
           console.log('###',indexFileName, 'Is not a file');
           res.render('index', {title: 'Web Doc Dir',
                                dirs: dirContent.getDirs(currentDir),
                                files: dirContent.getFiles(currentDir),
                                currentDir: reqUrl,
-                               prevDir: reqUrl.replace(/([^\/]*\/)$/,'')});
+                               prevDir: getParentDir(reqUrl)});
         }
       });
     } else {
@@ -158,30 +158,37 @@ var renderPageIndex = function (res, reqUrl, startDir ) {
                             dirs: dirContent.getDirs(currentDir),
                             files: dirContent.getFiles(currentDir),
                             currentDir: reqUrl,
-                            prevDir: reqUrl.replace(/([^\/]*\/)$/,'')});
+                            prevDir: getParentDir(reqUrl)});
     }
   });
-
-
-
 }
 
-var renderPageFile = function (res, reqUrl, startDir, fileName) {
-  console.log('@@@renderPageFile reqUrl:', reqUrl, 'startDir:', startDir, 'fileName:', fileName, 'req Replace:', reqUrl.replace(/([^\/]*)$/,''));
+var renderPageFile = function (res, reqUrl, docDir, fileName) {
+  console.log('@@@renderPageFile reqUrl:', reqUrl, 'docDir:', docDir, 'fileName:', fileName, 'req Replace:', getFileDir(reqUrl), 'path.dirname(reqUrl):', path.dirname(reqUrl));
 
-  var currentDir = startDir + reqUrl.replace(/([^\/]*)$/,'');
+  var currentDir = path.join(docDir, getFileDir(reqUrl));
 
   fs.stat(fileName, function(err, stats) {
     if (stats.isFile()) {
         res.render('index', {title: 'Web Doc Dir',
                    dirs: dirContent.getDirs(currentDir),
                    files: dirContent.getFiles(currentDir),
-                   currentDir: reqUrl.replace(/([^\/]*)$/,''),
-                   prevDir: reqUrl.replace(/([^\/]*)$/,'').replace(/([^\/]*\/)$/,''),
-                   doc: fileName ? marked(fs.readFileSync(fileName, 'utf-8')) : null});
+                   currentDir: getFileDir(reqUrl),
+                   prevDir: getParentDir(getFileDir(reqUrl)),
+                   doc: marked(fs.readFileSync(fileName, 'utf-8'))});
     }
   });
 }
+
+// path extension
+var getParentDir = function(dirPath) {
+  return dirPath.replace(/([^\/]*\/)$/,'') //cuts last dir xx/yy/zz/ -> xx/yy/
+}
+
+var getFileDir = function(filePath) {
+  return filePath.replace(/([^\/]*)$/,''); // cuts file name xx/yy/zz -> xx/yy/
+}
+
 
 //app.get('/users', user.list);
 
@@ -202,7 +209,7 @@ io.sockets.on('connection', function (socket){
   var indexFile = false;
 
   prevDir = currentDir;
-  currentDir = startDir + '/';
+  currentDir = docDir + '/';
   changeDir(currentDir, prevDir);
 
 
