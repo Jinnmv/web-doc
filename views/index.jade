@@ -5,35 +5,45 @@ block content
     h1= currentDir
   hr
   
+  #notification
+
   #nav
+
     #nav-back
 
     if prevDir
       #nav-back-extra
         a(href='#{prevDir}') Back
 
-    ul#nav-dirs
-    ul#nav-files
+    //ul#nav-dirs
+    //ul#nav-files
 
-    ul#nav-dirs-extra
+    a#create-dir(href='#') New Section
+
+    ul#nav-dirs
       if dirs
         for dir in dirs
           li
-            b
-              a(href='#{currentDir}#{dir}/') #{dir}
+            a(href='#{currentDir}#{dir}/') #{dir}
 
-    ul#nav-files-extra
+    ul#nav-files
       if files
         for file in files
           li
             a(href='#{currentDir}#{file}') #{file}
 
-  hr
-  
-  #doc
+    a#create-file(href='#') New Document
 
   if doc
-    #doc-extra!= doc
     hr
 
-  #doc-footer
+    a#edit-file(href='#') Edit
+    #doc(data-file-name='#{docFileName}') !{doc}
+
+    hr
+
+    if accessTime
+      #doc-footer Last Modified: #{accessTime}
+      hr
+
+

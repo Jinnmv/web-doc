@@ -75,17 +75,18 @@ var docDir = "doc"; // TODO put into config
 //      ['foo', 'bar', 'baz']
 
 app.get('/*', function(req, res, next){
-  //console.log('>> req.url:', req.url);
+  console.log('>> req.url:', req.url);
   if (req.url.slice(-1) === '/') {
 
     // Url points to Directory
-    fs.exists(docDir + req.url, function(exists){
+    fs.exists(path.join(docDir, req.url), function(exists){
       if (exists) {
 
         // Async check for path is Directory
-        fs.stat(docDir + req.url, function(err, stat) {
+        fs.stat(path.join(docDir, req.url), function(err, stat) {
           if (stat && stat.isDirectory()) {
             console.log('### Found Doc directory by URL', docDir + req.url);
+
             renderPageIndex(res, req.url, docDir);
           } else {
             console.log('### URL:', docDir + req.url, 'is not doc dir');
@@ -102,10 +103,10 @@ app.get('/*', function(req, res, next){
   } else {
 
     // Url points to File
-    fs.exists(docDir + req.url + '.md', function(exists){
+    fs.exists(path.join(docDir, req.url) + '.md', function(exists){
       if (exists) {
         console.log('###Found Doc file: ', docDir + req.url + '.md');
-        renderPageFile(res, req.url, docDir, docDir + req.url + '.md');
+        renderPageFile(res, req.url, docDir, path.join(docDir, req.url) + '.md');
       } else {
 
         fs.exists(__dirname + '/public' + req.url, function(exists){
@@ -137,19 +138,21 @@ var renderPageIndex = function (res, reqUrl, docDir ) {
       fs.stat(indexFileName, function(err, stats) {
         if (stats && stats.isFile()) {
           console.log('### Index file', indexFileName, 'found in dir', currentDir);
-          res.render('index', {title: 'Web Doc Dir',
-                               dirs: dirContent.getDirs(currentDir),
-                               files: dirContent.getFiles(currentDir),
-                               currentDir: reqUrl,
-                               prevDir: getDirParent(reqUrl),
-                               doc: marked(fs.readFileSync(indexFileName, 'utf-8'))});
+          res.render('index', { title: 'Web Doc Dir',
+                                dirs: dirContent.getDirs(currentDir),
+                                files: dirContent.getFiles(currentDir),
+                                currentDir: reqUrl,
+                                prevDir: getDirParent(reqUrl),
+                                doc: marked(fs.readFileSync(indexFileName, 'utf-8')),
+                                docFileName: indexFileName,
+                                accessTime: stats.mtime});
         } else {
           console.log('###',indexFileName, 'Is not a file');
-          res.render('index', {title: 'Web Doc Dir',
-                               dirs: dirContent.getDirs(currentDir),
-                               files: dirContent.getFiles(currentDir),
-                               currentDir: reqUrl,
-                               prevDir: getDirParent(reqUrl)});
+          res.render('index', { title: 'Web Doc Dir',
+                                dirs: dirContent.getDirs(currentDir),
+                                files: dirContent.getFiles(currentDir),
+                                currentDir: reqUrl,
+                                prevDir: getDirParent(reqUrl)});
         }
       });
     } else {
@@ -170,12 +173,17 @@ var renderPageFile = function (res, reqUrl, docDir, fileName) {
 
   fs.stat(fileName, function(err, stats) {
     if (stats.isFile()) {
-        res.render('index', {title: 'Web Doc Dir',
-                   dirs: dirContent.getDirs(currentDir),
-                   files: dirContent.getFiles(currentDir),
-                   currentDir: getFileDir(reqUrl),
-                   prevDir: getDirParent(getFileDir(reqUrl)),
-                   doc: marked(fs.readFileSync(fileName, 'utf-8'))});
+      console.log('### Index file', fileName, 'found in dir', currentDir);
+      res.render('index', { title: 'Web Doc Dir',
+                            dirs: dirContent.getDirs(currentDir),
+                            files: dirContent.getFiles(currentDir),
+                            currentDir: getFileDir(reqUrl),
+                            prevDir: getDirParent(getFileDir(reqUrl)),
+                            doc: marked(fs.readFileSync(fileName, 'utf-8')),
+                            docFileName: fileName,
+                            accessTime: stats.mtime });
+    } else {
+      console.log('### Requested path is not a file', reqUrl);
     }
   });
 }
@@ -243,9 +251,107 @@ io.sockets.on('connection', function (socket){
     changeDir(currentDir, prevDir);
   });
 
-  socket.on('disconnect', function(){
+  socket.on('createDir', function(data){
+    console.log('>>> Socket: create new directory', data);
+    fs.mkdir(docDir + getFileDir(data.url) + data.dirName, 0755, function(err){ // TODO new folder rights should be put to config file
+      if (err){
+        console.log('>>> Unable to create a section: ', err);
+        socket.emit('showMessage', 'Unable to create a section. Error code:' + err.code);
+      } else {
+        console.log('>>> Folder created successfully', data.dirName );
+        updateDirsLsit(docDir + getFileDir(data.url));
+      }
+    });
+  });
+
+  socket.on('createFile', function(data) {
+    console.log('>>> Socket: create new file', data);
+    fs.writeFile(docDir + getFileDir(data.url) + data.fileName + '.md', data.fileContent, {encoding: 'utf8'}, function(err){ //TODO encoding and file ext put to config
+      if (err) {
+        console.log('>>> Unable to write a file', err);
+        socket.emit('showMessage', 'Unable to write a document. Error code:' + err.code);
+      } else {
+        console.log('>> File has been wrote successfully', data.fileName + '.md');
+        updateFilesList(docDir + getFileDir(data.url));
+        //updateDoc();
+      }
+    });
+  });
+
+  socket.on('getMdFile', function(data) {
+    console.log('>>> Socket: get MD file content', data);
+    fs.readFile(data.fileName, {encoding: 'utf8'}, function(err, fileContent){
+      if (err) {
+        console.log('>>> Unable to read a file', err);
+        socket.emit('showMessage', 'Unable to read a document. Error code:' + err.code);
+      } else {
+        console.log('>>> File has been read successfully', data.fileName, fileContent);
+        socket.emit('mdFile', { fileContent: fileContent});
+      }
+    });
+  });
+
+  socket.on('updateFile', function(data) {  // merge with createFile
+    console.log('>>> Socket: update file', data);
+    var newFileName = docDir + getFileDir(data.url) + data.fileName + '.md';
+
+    // Check file need to be renamed
+    if (newFileName != data.docFileName) {
+      console.log('>>> New file name provided. Renaming', data.docFileName, ' > ', newFileName);
+      fs.rename(data.docFileName, newFileName, function(err){
+        if (err) {
+          console.log('>>> Unable to rename a file'. err);
+          socket.emit('showMessage', '>>> Unable to rename a file. Error code:', err.code);
+          writeFile(data);
+        } else {
+          writeFile(data);  // TODO: Defect - user is on old url
+        }
+      });
+    } else {
+      writeFile(data);
+    }
+
 
   });
+
+  function writeFile(data){
+    var newFileName = docDir + getFileDir(data.url) + data.fileName + '.md';
+    fs.writeFile(newFileName, data.fileContent, {encoding: 'utf8'}, function(err){
+      if (err) {
+        console.log('>>> Unable to update a file', err);
+        socket.emit('showMessage', 'Unable to update a document. Error code:' + err.code);
+      } else {
+        console.log('>>> File has been updated successfully', data.fileName + '.md');
+        updateFilesList(docDir + getFileDir(data.url));
+        updateDoc(newFileName);
+      }
+    });
+  }
+
+  socket.on('disconnect', function(data){
+    console.log('Good Buy,', data);
+  });
+
+  function updateDirsLsit(currentDir) {
+    socket.emit('renderNavDirs', {dirs: dirContent.getDirs(currentDir)});
+  }
+
+  function updateFilesList(currentDir) {
+    socket.emit('renderNavFiles', {files: dirContent.getFiles(currentDir)});
+  }
+
+  function updateDoc(filePath) {
+    console.log('>>> Updating document');
+    fs.readFile(filePath, {encoding: 'utf8'}, function(err, fileContent){
+      if (err) {
+        console.log('>>> Unable to read a file', err);
+        socket.emit('showMessage', 'Unable to read a document. Error code:' + err.code);
+      } else {
+        console.log('>>> File has been read successfully', filePath, fileContent);
+        socket.emit('docFile', {docContent: marked(fileContent)});
+      }
+    });
+  }
 
   function changeDir(dirName, prevDir) {
 
