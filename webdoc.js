@@ -7,7 +7,7 @@ var express = require('express');
 var fs = require('fs');
 
 var routes = require('./routes');
-var user = require('./routes/user');
+var docRoute = require('./routes/docRoute');
 var http = require('http');
 var path = require('path');
 var dirContent = require('./lib/dirContent');
@@ -28,8 +28,10 @@ app.use(express.urlencoded());
 app.use(express.methodOverride());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
+
 //app.use(express.static(path.join(__dirname, 'doc')));
 
+// Initialize marked
 marked.setOptions({
   highlight: function (code) {
     return require('highlight.js').highlightAuto(code).value;
@@ -43,6 +45,8 @@ if ('development' == app.get('env')) {
 
 
 var docDir = "doc"; // TODO put into config
+var docsDirPath = "doc"; // TODO put into config
+var docExt = ".md"; // TODO put into config
 
 //app.get('/', routes.index);
 /*app.get('/', function(req, res, next){
@@ -74,8 +78,25 @@ var docDir = "doc"; // TODO put into config
 //    returns
 //      ['foo', 'bar', 'baz']
 
+app.get('/doc/*', function(req, res) {
+  res.render('docpage');
+});
+
+app.get('/', function(req, res) {
+  res.redirect('/doc/');
+});
+
+app.get('/form', function(req, res) {
+  res.render('form');
+});
+
+app.post('/doc/*', function(req, res, next) {
+  console.log('%%%% POST:', req.body);
+  res.render('docpage');
+});
+
 app.get('/*', function(req, res, next){
-  console.log('>> req.url:', req.url);
+  //console.log('>> req.url:', req.url);
   if (req.url.slice(-1) === '/') {
 
     // Url points to Directory
@@ -255,7 +276,7 @@ io.sockets.on('connection', function (socket){
     console.log('>>> Socket: create new directory', data);
     fs.mkdir(docDir + getFileDir(data.url) + data.dirName, 0755, function(err){ // TODO new folder rights should be put to config file
       if (err){
-        console.log('>>> Unable to create a section: ', err);
+        console.error('>>> Unable to create a section: ', err.stack);
         socket.emit('showMessage', 'Unable to create a section. Error code:' + err.code);
       } else {
         console.log('>>> Folder created successfully', data.dirName );
@@ -304,7 +325,7 @@ io.sockets.on('connection', function (socket){
           socket.emit('showMessage', '>>> Unable to rename a file. Error code:', err.code);
           writeFile(data);
         } else {
-          writeFile(data);  // TODO: Defect - user is on old url
+          writeFile(data);  // TODO: Defect - user is on old url + update doc name in html
         }
       });
     } else {
@@ -348,7 +369,16 @@ io.sockets.on('connection', function (socket){
         socket.emit('showMessage', 'Unable to read a document. Error code:' + err.code);
       } else {
         console.log('>>> File has been read successfully', filePath, fileContent);
-        socket.emit('docFile', {docContent: marked(fileContent)});
+
+        fs.stat(filePath, function(err, stats) {
+          if (err) {
+            console.log('>>> Unable to read file mtime', filePath);
+          } else {
+            socket.emit('docFile', {docContent: marked(fileContent), lastModified: stats.mtime, filePath: filePath});
+            console.log('>>> mtime:', stats.mtime);
+          }
+        });
+
       }
     });
   }

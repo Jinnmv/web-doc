@@ -1,0 +1,60 @@
+extends layout
+
+block content
+  header
+    h1
+      a(href='/#{docsDir}') #{docsTitle}
+
+  aside
+    if prevDir
+      nav#nav-back
+        a(href='#{prevDirPath}') Back
+    nav
+      a#create-dir(href='#') New Section
+      form(name='create-dir' method='post')#create-dir-form.hidden
+        input(name='dirName' placeholder='New Section name'  type='text' maxlength='64' autofocus required)
+        input(type='submit' value='Create')#confirm-create-dir.btn.btn-submit
+        input(type='button' value='Cancel')#cancel-create-dir.btn.btn-cancel
+        input(type='hidden' name='currentDirPath' value='#{currentDirPath}')
+        input(type='hidden' name='action' value='newDir')
+
+
+    if dirNames
+      nav#nav-dirs
+        ul
+          for dirName in dirNames
+            li
+              a(href='#{currentDirPath}#{dirName}/') #{dirName}
+
+    if fileNames
+      nav#nav-files
+        ul
+          for fileName in fileNames
+            li
+              a(href='#{currentDirPath}#{fileName}') #{fileName}
+
+    nav
+      a#create-file(href='#') New Document
+      form(name='create-file' method='post')#create-file-form.hidden
+        input(name='fileName' placeholder='New Document name' type='text' maxlength='128' autofocus required)
+        input(type='submit' value='Save')#confirm-create-file.btn.btn-submit
+        input(type='button' value='Cancel')#cancel-create-file.btn.btn-cancel
+        br
+        textarea(name='fileText')
+
+  hr
+
+  if doc
+    a#edit-file(href='#') Edit Document
+    form(name='edit-file' method='post')#edit-file-form.hidden
+      input(type='submit' value='Save')#confirm-edit-file.btn.btn-submit
+      input(type='button' value='Cancel')#cancel-edit-file.btn.btn-cancel
+      input(name='fileName' placeholder='Document name' type='text' maxlength='128' autofocus required)
+      br
+      textarea(name='fileText')
+
+    article
+      section#doc(data-file-name='#{docFilePath}') !{doc}
+
+      if modifiedTime
+        footer#doc-footer Last Modified: #{modifiedTime}
