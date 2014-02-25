@@ -2,7 +2,7 @@ body {
   font-family: 'Open Sans', 'Trebuchet MS', Helvetica, sans-serif;
 }
 
-pre, code {
+textarea, input[type="text"], pre, code {
   font-family: 'Source Code Pro', Consolas, 'Courier New', monospace;
 }
 
