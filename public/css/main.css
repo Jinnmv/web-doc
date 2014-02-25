@@ -91,11 +91,68 @@ textarea {
    Author's custom styles
    ========================================================================== */
 
+body > footer {
+  text-align: center;
+}
 
+header a {
+  text-decoration: none;
+  color: inherit;
+}
 
+header img {
+  margin: .5em;
+}
 
+nav#nav-dirs li {
+  font-weight: bold;
+}
+/* To Remove */
+#notification {
+  background-color: orange;
+}
 
+/* Document Footer */
+footer#doc-footer {
+  font-weight: 600;
+}
 
+footer#doc-footer > time {
+  font-weight: normal;
+}
+
+/*** Forms ***/
+#create-dir-form input,
+#create-file-form input,
+#create-file-form textarea,
+#edit-file-form input,
+#edit-file-form textarea {
+  margin: .3em;
+}
+
+#create-file-form textarea,
+#edit-file-form textarea {
+  width: 100%;
+  height: 36em;
+}
+
+#create-dir-form  input,
+#create-file-form input,
+#edit-file-form input {
+  font-size: 1.3em;
+}
+
+#create-dir-form input[name="dirName"],
+#create-file-form input[name="fileName"],
+#edit-file-form input[name="fileName"] {
+  width: 28em;
+  font-weight: 600;
+}
+
+.btn-group {
+ /* float: right;*/
+  display: inline-block;
+}
 
 
 

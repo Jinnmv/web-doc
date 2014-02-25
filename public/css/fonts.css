@@ -1,0 +1,11 @@
+body {
+  font-family: 'Open Sans', 'Trebuchet MS', Helvetica, sans-serif;
+}
+
+pre, code {
+  font-family: 'Source Code Pro', Consolas, 'Courier New', monospace;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 500;
+}

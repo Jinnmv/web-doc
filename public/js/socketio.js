@@ -70,10 +70,10 @@ $(document).ready(function(){
     $('#doc').hide();
     $('#create-file').hide();
     $('#edit-file').hide();
-    doc.after('<div id="temp-edit-file"><form><a href="#" id="create-file" class="btn btn-submit">Save</a><a href="#" id="cancel-edit-file" class="btn btn-cancel">Cancel</a><br><input id="file-name" type="text"><br><textarea id="doc-edit"></textarea></form></div>');
+    doc.after('<div id="temp-edit-file"><form><a href="#" id="confirm-create-file" class="btn btn-submit">Save</a><a href="#" id="cancel-edit-file" class="btn btn-cancel">Cancel</a><br><input id="file-name" type="text"><br><textarea id="doc-edit"></textarea></form></div>');
   });
 
-  $(document).on('click', '#create-file', function(linkItem){
+  $(document).on('click', '#confirm-create-file', function(linkItem){
     socket.emit('createFile', { fileName: $('input#file-name').val(), fileContent: $('#doc-edit').val(), url: window.location.pathname });
 
     $('#temp-edit-file').remove();
@@ -107,7 +107,11 @@ $(document).ready(function(){
   $(document).on('click', '#save-file', function(linkItem){
     socket.emit('updateFile', { fileName: $('input#file-name').val(), docFileName: $('#doc').data('fileName'), fileContent: $('#doc-edit').val(), url: window.location.pathname });
     socket.on('docFile', function(data){
+      console.log('>> Socket on docFile ', data);
       $('#doc').html(data.docContent);
+      //$('#doc').data('fileName') = data.filePath;
+      $('#doc-footer').html('Last Modified: ' + data.lastModified);
+
     });
 
     $('#temp-edit-file').remove();
