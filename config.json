@@ -2,19 +2,22 @@
 	"mode": "development",
 	"webServer": {
 		"host": "localhost",
-		"port": "8080",
+		"port": 8080,
 		"docsRootUrl": "/doct/"
 	},
+
 	"docs": {
 		"path": "./doc",
 		"encoding": "utf-8",
-		"newDirMask": "0755",
+		"newDirMask": 0755,
 		"extention": ".md",
 		"indexName": "index"
 	},
+
 	"title": "WebDoc Portal for iFoxy",
 	"logo": "/img/logo.png",
-	"readOnly": "false",
+	"hideNavigation": false,
+	"readOnly": false,
 	"moderators": [
 		"localhost",
 		"ivan",

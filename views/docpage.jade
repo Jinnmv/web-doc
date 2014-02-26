@@ -12,45 +12,46 @@ block content
   if message
     #notification= message
 
-  aside
-    if prevDirUrl
-      nav#nav-back: a(href='#{prevDirUrl}') Back
-    nav
-      a#create-dir(href='#') New Section
-      form(name='create-dir' method='post')#create-dir-form.hidden
-        input(name='dirName' placeholder='New Section name'  type='text' maxlength='64' autofocus required)
-        .btn-group
-          input(type='submit' value='Create')#confirm-create-dir.btn.btn-submit
-          input(type='button' value='Cancel')#cancel-create-dir.btn.btn-cancel
-        input(type='hidden' name='currentDirPath' value='#{currentDirPath}')
-        input(type='hidden' name='action' value='newDir')
+  unless hideNavigation
+    aside
+      if prevDirUrl
+        nav#nav-back: a(href='#{prevDirUrl}') Back
+      nav
+        a#create-dir(href='#') New Section
+        form(name='create-dir' method='post')#create-dir-form.hidden
+          input(name='dirName' placeholder='New Section name'  type='text' maxlength='64' autofocus required)
+          .btn-group
+            input(type='submit' value='Create')#confirm-create-dir.btn.btn-submit
+            input(type='button' value='Cancel')#cancel-create-dir.btn.btn-cancel
+          input(type='hidden' name='currentDirPath' value='#{currentDirPath}')
+          input(type='hidden' name='action' value='newDir')
 
 
-    if dirNames
-      nav#nav-dirs
-        ul
-          for dirName in dirNames
-            li: a(href='#{currentDirUrl}#{dirName}/') #{dirName}
+      if dirNames
+        nav#nav-dirs
+          ul
+            for dirName in dirNames
+              li: a(href='#{currentDirUrl}#{dirName}/') #{dirName}
 
-    if fileNames
-      nav#nav-files
-        ul
-          for fileName in fileNames
-            li: a(href='#{currentDirUrl}#{fileName}') #{fileName}
+      if fileNames
+        nav#nav-files
+          ul
+            for fileName in fileNames
+              li: a(href='#{currentDirUrl}#{fileName}') #{fileName}
 
-    nav
-      a#create-file(href='#') New Document
-      form(name='create-file' method='post')#create-file-form.hidden
-        input(name='fileName' placeholder='New Document name' type='text' maxlength='128' autofocus required)
-        .btn-group
-          input(type='submit' value='Save')#confirm-create-file.btn.btn-submit
-          input(type='button' value='Cancel')#cancel-create-file.btn.btn-cancel
-        input(type='hidden' name='currentDirPath' value='#{currentDirPath}')
-        input(type='hidden' name='action' value='newFile')
-        br
-        textarea(name='fileText')
+      nav
+        a#create-file(href='#') New Document
+        form(name='create-file' method='post')#create-file-form.hidden
+          input(name='fileName' placeholder='New Document name' type='text' maxlength='128' autofocus required)
+          .btn-group
+            input(type='submit' value='Save')#confirm-create-file.btn.btn-submit
+            input(type='button' value='Cancel')#cancel-create-file.btn.btn-cancel
+          input(type='hidden' name='currentDirPath' value='#{currentDirPath}')
+          input(type='hidden' name='action' value='newFile')
+          br
+          textarea(name='fileText')
 
-  hr
+    hr
 
   if doc
     a#edit-file(href='#') Edit Document

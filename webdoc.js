@@ -37,7 +37,8 @@ nconf.defaults({
     extention: '.md',
     indexName: 'index'
   },
-  title: 'WebDoc Portal for iFoxy',
+  title: 'WebDoc Portal',
+  hideNavigation: false,
   readOnly: true
 });
 
@@ -66,7 +67,7 @@ app.configure(function() {
 // production environment
 app.configure('production', function() {
   var oneYear = 31557600000;
-  app.set('view cache', 'jade');
+  app.set('view cache');
   app.use(express.favicon(path.join(__dirname, 'favicon.ico'), { maxAge: oneYear }));
   app.use(express.static(path.join(__dirname, 'public'), {maxAge: oneYear}));
   app.use(express.logger());
@@ -205,6 +206,7 @@ var docUrlRouter = function(req, res, message) {
 var renderDocPage = function(res, currentDirUrl, currentDirPath, currentFilePath, documentMd, modifiedTime, message) {
   res.render('docpage', { docsTitle: nconf.get('title'),
                           logoImgPath: nconf.get('logo'),
+                          hideNavigation: nconf.get('hideNavigation'),
                           message: message,
                           docsDir: nconf.get('webServer:docsRootUrl'),
                           prevDirUrl: currentDirUrl == nconf.get('webServer:docsRootUrl') ? false : parentUrl(currentDirUrl),
