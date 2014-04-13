@@ -1,0 +1,60 @@
+* {
+  line-height: 1.5;
+  margin: 0;
+}
+
+html {
+
+}
+
+body {
+  left: 50%;
+  margin: -243px 0 0 -410px;
+  position: absolute;
+  top: 50%;
+  width: 854px;
+
+}
+
+h1 {
+  font-size: 2em;
+  font-weight: 400;
+  text-align: center;
+}
+
+p {
+  line-height: 2;
+  margin: 1em 0;
+  text-align: center;
+}
+
+code {
+  font-size: 0.8em;
+  text-align: left;
+}
+
+@media only screen and (max-width: 800px) {
+
+  * {
+      line-height: 1;
+  }
+
+  body {
+    margin: 10px auto;
+    position: static;
+    width: 95%;
+  }
+
+  h1 {
+    font-size: 1.5em;
+  }
+
+  p {
+    line-height: 1;
+  }
+
+  code {
+    font-size: 0.7em;
+    text-align: left;
+  }
+}

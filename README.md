@@ -23,6 +23,13 @@ Configuration example:
 		"extention": ".md",
 		"indexName": "index"
 	},
+	
+	"log": {
+		"fileName":"./webdoc.log",
+		"fileMaxSize": 10485760,
+		"filesMaxCount": 10
+	},
+	
 	"title": "WebDoc Portal",
 	"logo": "/img/logo.png",
 	"hideNavigation": false,
@@ -39,7 +46,7 @@ Configuration example:
   * `development` - enables extended logging and disables server caching;
   * `production` - disables extended logging and enables server caching;
 * `webServer` - section for webserver detailed configuration:
-  * `host` - host for the system. Hostname or ip address could be provided;
+  * `host` - host for the system. Hostname or ip address could be provided; In case of WebServer + node configuration, there should be local IP (`127.0.0.1` or `localhost`). In case of Node standalone configuration, there should be `0.0.0.0` - to listen any connection. '
   * `port` - port used;
   * `decsRootUrl` - mapping of documentation system url. Default value `/` or `/doc/`;
 * `docs` - section for documentation files detailed configuraiton:
@@ -53,3 +60,13 @@ Configuration example:
 * `hideNavigation` - you probably don't want navigation section; Defalult: `false`;
 * `readOnly` - if `true` will not be possible to edit documentation / create folders from web UI, except `moderators` hosts list. if `false` webdoc will be available to edit for everyone. Default: `false`. **Not Implemented**
 * `moderators` - list of hosts/IPs of moderators to allow them edit read-only webdoc; **Not implemented**
+
+## API
+/api/1/document?path='/dir01/index.md'
+/api/1/document/dir01/index.md
+GET - read
+POST - create
+PUT - update
+
+## Notes
+Update NPS with package.json: `npm install --save`

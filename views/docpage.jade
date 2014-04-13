@@ -10,20 +10,21 @@ block content
   hr
 
   if message
-    #notification= message
+    #notification.message= message
 
   unless hideNavigation
-    aside
+    aside#navigation
       if prevDirUrl
         nav#nav-back: a(href='#{prevDirUrl}') Back
       nav
-        a#create-dir(href='#') New Section
+        #create-dir.active-link New Section
         form(name='create-dir' method='post')#create-dir-form.hidden
           input(name='dirName' placeholder='New Section name'  type='text' maxlength='64' autofocus required)
           .btn-group
             input(type='submit' value='Create')#confirm-create-dir.btn.btn-submit
             input(type='button' value='Cancel')#cancel-create-dir.btn.btn-cancel
           input(type='hidden' name='currentDirPath' value='#{currentDirPath}')
+          input(type='hidden' name='dirPath' value='#{relativeDirPath}')
           input(type='hidden' name='action' value='newDir')
 
 
@@ -40,36 +41,39 @@ block content
               li: a(href='#{currentDirUrl}#{fileName}') #{fileName}
 
       nav
-        a#create-file(href='#') New Document
-        form(name='create-file' method='post')#create-file-form.hidden
-          input(name='fileName' placeholder='New Document name' type='text' maxlength='128' autofocus required)
-          .btn-group
-            input(type='submit' value='Save')#confirm-create-file.btn.btn-submit
-            input(type='button' value='Cancel')#cancel-create-file.btn.btn-cancel
-          input(type='hidden' name='currentDirPath' value='#{currentDirPath}')
-          input(type='hidden' name='action' value='newFile')
-          br
-          textarea(name='fileText')
+        #create-file.active-link New Document
 
-    hr
+    form(name='create-file' method='post')#create-file-form.hidden
+      input(name='fileName' placeholder='New Document name' type='text' maxlength='128' autofocus required)
+      .btn-group
+        input(type='submit' value='Save')#confirm-create-file.btn.btn-submit
+        input(type='button' value='Cancel')#cancel-create-file.btn.btn-cancel
+      input(type='hidden' name='dirPath' value='#{relativeDirPath}')
+      br
+      textarea(name='fileText')
+
+    //hr
 
   if doc
-    a#edit-file(href='#') Edit Document
-    form(name='edit-file' method='post')#edit-file-form.hidden
-      input(name='fileName' placeholder='Document name' type='text' maxlength='128' required value='#{docName}')
-      .btn-group
-        input(type='submit' value='Save')#confirm-edit-file.btn.btn-submit
-        input(type='button' value='Cancel')#cancel-edit-file.btn.btn-cancel
-      input(type='hidden' name='currentDirPath' value='#{currentDirPath}')
-      input(type='hidden' name='fileNameOrig' value='#{docName}')
-      input(type='hidden' name='action' value='updateFile')
-      br
-      textarea(name='fileText' autofocus) #{docMd}
-
     article#doc
+
+      #edit-file.active-link Edit Document
+
+      form(name='edit-file' method='post')#edit-file-form.hidden
+        input(name='fileName' placeholder='Document name' type='text' maxlength='128' required value='#{docName}')
+        .btn-group
+          input(type='submit' value='Save')#confirm-edit-file.btn.btn-submit
+          input(type='button' value='Cancel')#cancel-edit-file.btn.btn-cancel
+        input(type='hidden' name='currentDirPath' value='#{currentDirPath}')
+        input(type='hidden' name='fileNameOrig' value='#{docName}')
+        input(type='hidden' name='filePath' value='#{relativeFilePath}')
+        input(type='hidden' name='_method' value='put')
+        br
+        textarea(name='fileText' autofocus)
+
       section#content(data-file-name='#{docFilePath}') !{doc}
 
       if modifiedTime
         hr
-        footer#doc-footer Last Modified:
+        footer#doc-footer Last Modified:&nbsp;
           time(datetime='#{modifiedTime}')

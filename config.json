@@ -1,17 +1,23 @@
 {
 	"mode": "development",
 	"webServer": {
-		"host": "localhost",
-		"port": 8080,
-		"docsRootUrl": "/doct/"
+		"host": "0.0.0.0",
+		"port": 8888,
+		"docsRootUrl": "/docs/"
 	},
 
 	"docs": {
 		"path": "./doc",
 		"encoding": "utf-8",
-		"newDirMask": 0755,
-		"extention": ".md",
+		"newDirMask": "0755",
+		"extension": ".md",
 		"indexName": "index"
+	},
+
+	"log": {
+		"fileName":"./webdoc.log",
+		"fileMaxSize": 10485760,
+		"filesMaxCount": 10
 	},
 
 	"title": "WebDoc Portal for iFoxy",
@@ -20,7 +26,7 @@
 	"readOnly": false,
 	"moderators": [
 		"localhost",
-		"ivan",
+		"ion",
 		"127.0.0.1"
 	]
 }

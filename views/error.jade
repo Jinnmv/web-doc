@@ -1,0 +1,16 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="utf-8")
+    title #{docsTitle} - #{errorTitle}
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    link(rel='stylesheet' href='/css/normalize.css')
+    link(rel='stylesheet' href='/css/main.css')
+    link(rel='stylesheet' href='/css/fonts.css')
+    link(rel='stylesheet' href='/css/error.css')
+  body
+    h1= errorTitle
+    p= errorMessage
+    code!= errorStack
+
+//IE needs 512+ bytes: http://blogs.msdn.com/b/ieinternals/archive/2010/08/19/http-error-pages-in-internet-explorer.aspx
