@@ -62,11 +62,35 @@ Configuration example:
 * `moderators` - list of hosts/IPs of moderators to allow them edit read-only webdoc; **Not implemented**
 
 ## API
-/api/1/document?path='/dir01/index.md'
+
 /api/1/document/dir01/index.md
-GET - read
-POST - create
-PUT - update
+
+* GET - read file by relative path
+* POST - create file/dir
+* PUT - update file
 
 ## Notes
 Update NPS with package.json: `npm install --save`
+
+## Node.js windows install
+
+1. Download Node from http://nodejs.org/download/ (Windows Installer (.msi)).
+2. Install.
+
+	> Now you can use Node in command line
+
+3. Download WebDoc project from Git (https://github.com/Jinnmv/webdoc/archive/master.zip);
+4. Unpack archive to some directory, e.g.: `D:\webdoc`
+5. Right click on a `webdoc` folder holding `<Shift>` key. Select '`Open command window here`'
+
+You will get command prompt opened in you directory `D\webdoc`.
+
+6. Type `npm install` to download and install all required modules.
+
+Now you can launch server
+
+7. Type `node webdoc`
+8. Enjoy
+
+> **Note**: if you have git client, you can clone repositry `git clone https://github.com/Jinnmv/webdoc.git`.
+
