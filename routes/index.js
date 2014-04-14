@@ -36,15 +36,16 @@ var renderDir = function(req, res, reqDirPath, message){
 
 		// Step 2: Check requested path is a directory
 		function(stat, callback){
-			var reqDirIdxPath = reqDirPath + config.docs.indexName + config.docs.extension;
 
 			if (stat.isDirectory()) {
+				var reqDirIdxPath = path.join(reqDirPath, config.docs.indexName + config.docs.extension);
+				
 				logger.verbose('Documents directory [%s] exist', reqDirPath);
 				logger.silly('Checking for index file [%s] exist in documents directory [%s]', reqDirIdxPath, reqDirPath);
 				callback(null, reqDirIdxPath);
 
 			} else {
-				callback({errorCode: 'NOTDIR', errMessage:'Requested path is not a directory', path: reqDirIdxPath});
+				callback({errorCode: 'NOTDIR', errMessage:'Requested path is not a directory', path: reqDirPath});
 			}
 		},
 
@@ -52,7 +53,7 @@ var renderDir = function(req, res, reqDirPath, message){
 		// Step 4: Render view with index content or empty
 		function(reqDirIdxPath, callback) {
 			fs.stat(reqDirIdxPath, function (err, stat) {
-				if(undefined === err && stat.isFile()){
+				if(undefined == err && stat.isFile()){
 					logger.verbose('Found index file [%s] in a documents directory', reqDirIdxPath);
 					logger.info('Rendering Document index file', reqDirIdxPath);
 					mdServer.renderDocPage(res, req.url, reqDirPath, reqDirIdxPath, stat.mtime, message);
