@@ -108,18 +108,22 @@ app.use(function (req, res, next) {
 	next();
 });
 
-app.get(config.webServer.docsRootUrl + '*', routes.document);
-
-
 /**
  * API
  **/
 
-app.get('/api/v1/docs/*', apiRoutes.getDocument);
+app.get(config.webServer.apiUrl + '*', apiRoutes.getDocument);
 
-app.post('/api/v1/docs/*', apiRoutes.createItem);
+app.post(config.webServer.apiUrl + '*', apiRoutes.createItem);
 
-app.put('/api/v1/docs/*', apiRoutes.updateDocument);
+app.put(config.webServer.apiUrl + '*', apiRoutes.updateDocument);
+
+/**
+ * Document Server routes
+ */
+
+app.get(config.webServer.docsRootUrl + '*', routes.document);
+
 
 // just for test
 app.get('/500', function(req, res) {

@@ -1,17 +1,15 @@
 $(document).ready(function(){
 
-	var apiUrl = '/api/v1/docs/';
-
 	// Init
 	showMessageM();
 	$('footer#doc-footer > time').html(convertDateToLocal($('footer#doc-footer > time').attr('datetime')));
 
 	// Local helpers
-	function showMessageM(messageText) {
+	function showMessageM(messageText) {	// TODO: use jQuery plugin
 		//$('#notification').hide();  // TODO put to CSS layout
 		if (messageText) $('#notification').html(messageText);
 
-		if ($('#notification').text.length != 0 ) {
+		if ($('#notification').text.length !== 0 ) {
 			$('#notification').slideDown('fast', function(){
 				window.setTimeout(function(){
 					$('#notification').slideUp();
@@ -41,7 +39,8 @@ $(document).ready(function(){
 		event.preventDefault();
 
 		var $form = $( this ),
-			dirUrl = $form.find('input[name=dirPath]').val();
+			dirUrl = $form.find('input[name=dirPath]').val(),
+			apiUrl = $form.attr('action');
 
 		$.post( apiUrl + dirUrl, $form.serialize() )
 		 .done(function( data ) {
@@ -67,7 +66,8 @@ $(document).ready(function(){
 		event.preventDefault();
 
 		var $form = $( this ),
-			dirUrl = $form.find('input[name=dirPath]').val();
+			dirUrl = $form.find('input[name=dirPath]').val(),
+			apiUrl = $form.attr('action');
 
 		$.post( apiUrl + dirUrl, $form.serialize() )
 		 .done(function( data, textStatus, jqXHR ) {
@@ -79,10 +79,31 @@ $(document).ready(function(){
 			}
 		})
 		 .fail(function( data ) {
-			$form.showMessage(data.responseText);
+			$form.showMessage(data);
+		});
+	});
+
+	// Edit File
+	$(document).on('click', '#edit-file', function(linkItem){
+		linkItem.preventDefault();
+
+		var $form = $( '#edit-file-form' ),
+			fileUrl = $form.find('input[name=filePath]').val(),
+			apiUrl = $form.attr('action');
+
+		// AJAX to load file text
+		$.get(apiUrl + fileUrl).done(function( data ) {
+			$form.find('textarea').val(data);
+		}).fail(function( data ) {
+			$form.showMessage(data.responseJSON.message);
+			console.error( 'Unable to load data:', data );
 		});
 
+		editFileFormShow();
+	});
 
+	$(document).on('click', '#cancel-edit-file', function(linkItem){
+		editFileFormHide();
 	});
 
 	$('#edit-file-form').submit(function( event ) {
@@ -92,7 +113,8 @@ $(document).ready(function(){
 
 
 		var $form = $( this ),
-			fileUrl = $form.find('input[name=filePath]').val();
+			fileUrl = $form.find('input[name=filePath]').val(),
+			apiUrl = $form.attr('action');
 
 		$.post( apiUrl + fileUrl, $form.serialize() )
 		 .done(function( data, textStatus, jqXHR ) {
@@ -104,34 +126,8 @@ $(document).ready(function(){
 			}
 		})
 		 .fail(function( data ) {
-			if ( 409 === data.status ) {
-				console.log('Error message:', data.responseJSON.message);
-				//showMessage('alarm ' + data.responseJSON.message);
-			}
-			$form.showMessage(data.responseJSON);
-			//showMessageM('alarm ' + data.responseJSON.message);
-			//showMessage(data.responseJSON);
-			//console.error( 'Failed to load data', data );
+			$form.showMessage(data.responseJSON.message);
 		});
-	});
-
-	$(document).on('click', '#edit-file', function(linkItem){
-		linkItem.preventDefault();
-
-		var fileUrl = $('#edit-file-form input[name=filePath]').val();
-		$.get( apiUrl + fileUrl )
-		 .done(function( data ) {
-			$('#edit-file-form textarea').val(data);
-		})
-		.fail(function( data ) {
-			console.error( 'Failed to load data' );
-		});
-
-		editFileFormShow();
-	});
-
-	$(document).on('click', '#cancel-edit-file', function(linkItem){
-		editFileFormHide();
 	});
 
 	function createDirFormShow() {

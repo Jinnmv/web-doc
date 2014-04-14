@@ -18,7 +18,7 @@ block content
         nav#nav-back: a(href='#{prevDirUrl}') Back
       nav
         #create-dir.active-link New Section
-        form(name='create-dir' method='post')#create-dir-form.hidden
+        form(name='create-dir' method='post' action='#{apiUrl}')#create-dir-form.hidden
           input(name='dirName' placeholder='New Section name'  type='text' maxlength='64' autofocus required)
           .btn-group
             input(type='submit' value='Create')#confirm-create-dir.btn.btn-submit
@@ -43,7 +43,7 @@ block content
       nav
         #create-file.active-link New Document
 
-    form(name='create-file' method='post')#create-file-form.hidden
+    form(name='create-file' method='post' action='#{apiUrl}')#create-file-form.hidden
       input(name='fileName' placeholder='New Document name' type='text' maxlength='128' autofocus required)
       .btn-group
         input(type='submit' value='Save')#confirm-create-file.btn.btn-submit
@@ -54,12 +54,12 @@ block content
 
     //hr
 
-  if doc
+  if undefied != doc
     article#doc
 
       #edit-file.active-link Edit Document
 
-      form(name='edit-file' method='post')#edit-file-form.hidden
+      form(name='edit-file' method='post' action='#{apiUrl}')#edit-file-form.hidden
         input(name='fileName' placeholder='Document name' type='text' maxlength='128' required value='#{docName}')
         .btn-group
           input(type='submit' value='Save')#confirm-edit-file.btn.btn-submit

@@ -11,7 +11,7 @@ var url = require('../lib/url');
 var mdServer = require('../lib/mdServer');
 var async = require('async');
 
-
+// Main method
 var renderDocument = function(req, res, next) {
 	var urlParam = '/' + req.params[0];
 
@@ -52,7 +52,7 @@ var renderDir = function(req, res, reqDirPath, message){
 		// Step 4: Render view with index content or empty
 		function(reqDirIdxPath, callback) {
 			fs.stat(reqDirIdxPath, function (err, stat) {
-				if(undefined == err && stat.isFile()){
+				if(undefined === err && stat.isFile()){
 					logger.verbose('Found index file [%s] in a documents directory', reqDirIdxPath);
 					logger.info('Rendering Document index file', reqDirIdxPath);
 					mdServer.renderDocPage(res, req.url, reqDirPath, reqDirIdxPath, stat.mtime, message);
