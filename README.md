@@ -94,3 +94,17 @@ Now you can launch server
 
 > **Note**: if you have git client, you can clone repositry `git clone https://github.com/Jinnmv/webdoc.git`.
 
+### Script to launch server
+You can write simple script for windows to launch a server:
+
+`webdoc-run.cmd`:
+
+```cmd
+@echo off
+
+D:
+cd D:\webdoc\
+node webdoc.js
+
+echo on
+```
