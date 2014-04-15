@@ -23,6 +23,7 @@
 
 	"title": "WebDoc Portal for iFoxy",
 	"logo": "/img/logo.png",
+	"copyright": "copyright © 2014",
 	"hideNavigation": false,
 	"readOnly": false,
 	"moderators": [
