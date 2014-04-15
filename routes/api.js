@@ -55,8 +55,8 @@ var createItem = function(req, res) {
 	}
 
 	// Nothing to create
-	if (undefined === req.body.dirName &&
-	    undefined === req.body.fileName) {
+	if (undefined == req.body.dirName &&
+	    undefined == req.body.fileName) {
 		// HTTP 412 Precondition Failed
 		res.send(412);
 	}
