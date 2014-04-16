@@ -27,7 +27,6 @@ $(document).ready(function(){
 	// Event Handlers
 	//***************
 	$(document).on('click', '#create-dir', function(linkItem){
-		linkItem.preventDefault();
 		createDirFormShow();
 	});
 
@@ -61,7 +60,6 @@ $(document).ready(function(){
 	});
 
 	$(document).on('click', '#create-file', function(linkItem){
-		linkItem.preventDefault();
 		createFileFormShow();
 	});
 
@@ -99,7 +97,6 @@ $(document).ready(function(){
 
 	// Edit File
 	$(document).on('click', '#edit-file', function(linkItem){
-		linkItem.preventDefault();
 
 		var $form = $( '#edit-file-form' ),
 			fileUrl = $form.find('input[name=filePath]').val(),
