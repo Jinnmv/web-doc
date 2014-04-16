@@ -77,7 +77,7 @@ $(document).ready(function(){
 		// Fix for Win path, to convert to url slashes
 		dirUrl = dirUrl.replace(/\\/, '/');
 		
-		// remove unnecessary spaces
+		// remove unnecessary spaces 
 		var $fileName = $form.find('input[name=fileName]');
 		$fileName.val( $fileName.val().trim() );
 		
