@@ -94,7 +94,7 @@ Now you can launch server
 
 > **Note**: if you have git client, you can clone repositry `git clone https://github.com/Jinnmv/webdoc.git`.
 
-> For better update/working with git repo, it's recommnded to use Git clients for Windows. E.g.: http://code.google.com/p/tortoisegit/wiki/Download .
+> For better update/working with git repo, it's recommnded to use Git clients for Windows. E.g.: http://code.google.com/p/tortoisegit/wiki/Download . It's requires msysGit, see: (http://code.google.com/p/tortoisegit/wiki/SetupHowTo)
 
 ### Script to launch server
 You can write simple script for windows to launch a server:
