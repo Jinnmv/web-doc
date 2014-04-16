@@ -16,7 +16,6 @@ var logger = require('./lib/logger');
 var dirContent = require('./lib/dirContent');
 var mdServer =require('./lib/mdServer');
 var marked = require('marked');
-var socketio = require("socket.io");
 var url = require('./lib/url');
 
 
