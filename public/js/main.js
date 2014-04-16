@@ -41,6 +41,13 @@ $(document).ready(function(){
 		var $form = $( this ),
 			dirUrl = $form.find('input[name=dirPath]').val(),
 			apiUrl = $form.attr('action');
+			
+		// Fix for Win path, to convert to url slashes
+		dirUrl = dirUrl.replace(/\\/, '/');
+		
+		// remove unnecessary spaces
+		var $fileName = $form.find('input[name=fileName]');
+		$fileName.val( $fileName.val().trim() );
 
 		$.post( apiUrl + dirUrl, $form.serialize() )
 		 .done(function( data ) {
@@ -68,7 +75,14 @@ $(document).ready(function(){
 		var $form = $( this ),
 			dirUrl = $form.find('input[name=dirPath]').val(),
 			apiUrl = $form.attr('action');
-
+			
+		// Fix for Win path, to convert to url slashes
+		dirUrl = dirUrl.replace(/\\/, '/');
+		
+		// remove unnecessary spaces
+		var $fileName = $form.find('input[name=fileName]');
+		$fileName.val( $fileName.val().trim() );
+		
 		$.post( apiUrl + dirUrl, $form.serialize() )
 		 .done(function( data, textStatus, jqXHR ) {
 			editFileFormHide();
@@ -90,7 +104,10 @@ $(document).ready(function(){
 		var $form = $( '#edit-file-form' ),
 			fileUrl = $form.find('input[name=filePath]').val(),
 			apiUrl = $form.attr('action');
-
+		
+		// Fix for Win path, to convert to url slashes
+		fileUrl = fileUrl.replace(/\\/, '/'); 
+		
 		// AJAX to load file text
 		$.get(apiUrl + fileUrl).done(function( data ) {
 			$form.find('textarea').val(data);
@@ -111,11 +128,17 @@ $(document).ready(function(){
 		// Stop form from submitting normally
 		event.preventDefault();
 
-
 		var $form = $( this ),
 			fileUrl = $form.find('input[name=filePath]').val(),
 			apiUrl = $form.attr('action');
 
+		// Fix for Win path, to convert to url slashes
+		fileUrl = fileUrl.replace(/\\/, '/'); 
+		
+		// remove unnecessary spaces
+		var $fileName = $form.find('input[name=fileName]');
+		$fileName.val( $fileName.val().trim() );
+		
 		$.post( apiUrl + fileUrl, $form.serialize() )
 		 .done(function( data, textStatus, jqXHR ) {
 			createFileFormHide();

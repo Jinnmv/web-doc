@@ -132,7 +132,6 @@ var updateDocument = function(req, res) {
 
 				logger.debug('API: File has been updated successfully');
 
-				//var newFilePath = path.join(config.docs.path, url.getParent(urlParam), req.body.fileName + config.docs.extension);
 				var newFilePath = path.join(req.body.currentDirPath, req.body.fileName + config.docs.extension);
 				logger.debug('newFilePath', newFilePath);
 
