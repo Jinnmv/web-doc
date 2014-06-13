@@ -1,5 +1,5 @@
-/node_modules
-/doc
+/node_modules/
+/doc/
 /.todo
 /webdoc.log
 /config.json
