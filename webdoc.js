@@ -110,10 +110,9 @@ app.use(function (req, res, next) {
 /**
  * API
  **/
-
 app.get(config.webServer.apiUrl + '*', apiRoutes.getDocument);
 
-app.post(config.webServer.apiUrl + '*', apiRoutes.createItem);
+app.post(config.webServer.apiUrl + '*', apiRoutes.createDocument);
 
 app.put(config.webServer.apiUrl + '*', apiRoutes.updateDocument);
 

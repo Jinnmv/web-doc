@@ -3,12 +3,13 @@
  */
 
 // Dependencies
-var path = require('path');
-var fs = require('fs');
-var async = require('async');
+var path =   require('path');
+var fs =     require('fs');
+var async =  require('async');
+
 var config = require('../lib/config');
 var logger = require('../lib/logger');
-var url = require('../lib/url');
+var url =    require('../lib/url');
 
 
 
@@ -26,7 +27,14 @@ var getDocument = function(req, res) {
 	});
 };
 
-var createItem = function(req, res) {
+var createDocument = function( req, res ) {
+
+    // Nothing to create
+	if (undefined == req.body.dirName &&
+	    undefined == req.body.fileName) {
+		// HTTP 412 Precondition Failed
+		res.send(412, '"fileName" or "dirName" parameter required!');  // TODO: rephrase;
+	}
 
 	// Create new File
 	if (req.body.fileName) {	// TODD: move to seaprate funct
@@ -54,13 +62,11 @@ var createItem = function(req, res) {
 		createDir(req, res);
 	}
 
-	// Nothing to create
-	if (undefined == req.body.dirName &&
-	    undefined == req.body.fileName) {
-		// HTTP 412 Precondition Failed
-		res.send(412);
-	}
 };
+
+/*
+ * params: fileName, fileText
+ */
 
 var createFile = function ( req, res ) {
 	var urlParam = '/' + req.params[0]; // TODO: put to middleware
@@ -95,6 +101,8 @@ var createFile = function ( req, res ) {
 	});
 };
 
+/* param: dirName */
+
 var createDir = function ( req, res ) {
 	var urlParam = '/' + req.params[0];	// TODO: use of middleware
 	var reqDirPath = path.join(config.docs.path, urlParam, req.body.dirName);
@@ -109,6 +117,8 @@ var createDir = function ( req, res ) {
 	});
 };
 
+/* Params: fileName, fileNameOrig, currentDirPath, fileText */
+
 var updateDocument = function(req, res) {
 	var urlParam = '/' + req.params[0];
 
@@ -116,13 +126,73 @@ var updateDocument = function(req, res) {
 
 	logger.debug('fileName:', req.body.fileName);
 	logger.debug('Orig fileName:', req.body.fileNameOrig);
+	//logger.debug('currentDirPath:', req.body.currentDirPath);
 
-	if (req.body.fileName) {
+    if (undefined == req.body.fileName) {
+        res.send(412, '"fileName" or "dirName" parameter required!');  // TODO: rephrase;
+    }
 
-		var origFilePath = path.join(req.body.currentDirPath, req.body.fileNameOrig + config.docs.extension);
+    var origFilePath = path.join(config.docs.path, urlParam);
+    logger.debug('origFilePath', origFilePath);
 
+    var newFilePath = path.join(config.docs.path, url.getParent(urlParam), req.body.fileName + config.docs.extension);
+    logger.debug('newFilePath', newFilePath);
+
+    async.waterfall([
+        function (callback) {
+            fs.writeFile(origFilePath, req.body.fileText, { encoding: config.docs.encoding }, function (err) {
+                if (err) {
+                    callback(err);
+                } else {
+                    logger.debug('API: File has been updated successfully');
+                    callback(null);
+                }
+            });
+        },
+
+        function ( callback ) {
+            if (req.body.fileNameOrig != req.body.fileName) {
+
+                logger.debug('API: Rename file');
+                fs.exists(newFilePath, function (exists) {
+                    callback(null, exists);
+                });
+            }
+          },
+
+        function ( exists, callback ) {
+            logger.debug('API: Check for destination file is not present');
+            if ( exists ) {
+				callback({'errno': 47, code: 'EEXIST', message: 'Unable to rename. Requested file is already exist', path: newFilePath});
+            } else {
+                callback(null);
+            }
+        },
+
+        function ( callback ) {
+            fs.rename(origFilePath, newFilePath , function(err) {
+                if (err) {
+                    callback(err);
+                } else {
+                    res.location(config.webServer.docsRootUrl.slice(0,-1) + url.getParent(urlParam) + req.body.fileName); // slice to avoid double //
+                    callback(null);
+                }
+            });
+        }
+
+    ], function (err) {
+        if (err) {
+            res.send(409, err);
+        } else {
+            res.send(201);
+        }
+    });
+
+	/*
+    if (req.body.fileName) {
+
+		var origFilePath = path.join(config.docs.path, urlParam);
 		logger.debug('origFilePath', origFilePath);
-
 
 		fs.writeFile(origFilePath, req.body.fileText, { encoding: config.docs.encoding }, function (err) {
 			if (err) {
@@ -132,10 +202,11 @@ var updateDocument = function(req, res) {
 
 				logger.debug('API: File has been updated successfully');
 
-				var newFilePath = path.join(req.body.currentDirPath, req.body.fileName + config.docs.extension);
-				logger.debug('newFilePath', newFilePath);
+				if (req.body.fileNameOrig != req.body.fileName) {
 
-				if (origFilePath != newFilePath) {
+                    var newFilePath = path.join(config.docs.path, url.getParent(urlParam), req.body.fileName + config.docs.extension);
+                    logger.debug('newFilePath', newFilePath);
+
 					logger.debug('API: Rename file');
 					fs.exists(newFilePath, function (exists) {
 						if (exists) {	// Don't allow override existing file
@@ -145,7 +216,7 @@ var updateDocument = function(req, res) {
 								if (err) {
 									res.send(409, err);
 								} else {
-									res.location(config.webServer.docsRootUrl.slice(0,-1) + url.getParent(urlParam) + req.body.fileName); // slice ofr avoid double //
+									res.location(config.webServer.docsRootUrl.slice(0,-1) + url.getParent(urlParam) + req.body.fileName); // slice to avoid double //
 									res.send(201);
 								}
 							});
@@ -156,10 +227,12 @@ var updateDocument = function(req, res) {
 				}
 			}
 		});
-	}
+	} else {
+        res.send(412, '"fileName" or "dirName" parameter required!');  // TODO: rephrase;
+    } */
 };
 
 
 exports.getDocument = getDocument;
-exports.createItem = createItem;
+exports.createDocument = createDocument;
 exports.updateDocument = updateDocument;
