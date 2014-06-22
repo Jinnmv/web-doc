@@ -212,7 +212,7 @@ footer#doc-footer > time {
    ========================================================================== */
 
 /*
- * Hide from both screenreaders and browsers: h5bp.com/u
+ * Hide visually and from screen readers: h5bp.com/u
  */
 
 .hidden {
@@ -221,7 +221,7 @@ footer#doc-footer > time {
 }
 
 /*
- * Hide only visually, but have it available for screenreaders: h5bp.com/v
+ * Hide only visually, but have it available for screen readers: h5bp.com/v
  */
 
 .visuallyhidden {
@@ -251,7 +251,7 @@ footer#doc-footer > time {
 }
 
 /*
- * Hide visually and from screenreaders, but maintain layout
+ * Hide visually and from screen readers, but maintain layout
  */
 
 .invisible {
@@ -299,7 +299,7 @@ footer#doc-footer > time {
 
 /* ==========================================================================
    Print styles.
-   Inlined to avoid required HTTP connection: h5bp.com/r
+   Inlined to avoid the additional HTTP request: h5bp.com/r
    ========================================================================== */
 
 @media print {
@@ -324,11 +324,12 @@ footer#doc-footer > time {
     }
 
     /*
-     * Don't show links for images, or javascript/internal links
+     * Don't show links that are fragment identifiers,
+     * or use the `javascript:` pseudo protocol
      */
 
-    a[href^="javascript:"]:after,
-    a[href^="#"]:after {
+    a[href^="#"]:after,
+    a[href^="javascript:"]:after {
         content: "";
     }
 
