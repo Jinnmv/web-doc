@@ -1,0 +1,35 @@
+@font-face {
+  font-family: 'Source Code Pro';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Source Code Pro'), local('SourceCodePro-Regular'),
+      url(http://themes.googleusercontent.com/static/fonts/sourcecodepro/v4/mrl8jkM18OlOQN8JLgasDxBHWFfxJXS04xYOz0jw624.woff) format('woff'),
+      url(/css/fonts/SourceSansPro/SourceCodePro-Regular.woff) format('woff');
+}
+
+@font-face {
+  font-family: 'Source Code Pro';
+  font-style: normal;
+  font-weight: 500;
+  src: local('Source Code Pro Medium'), local('SourceCodePro-Medium'),
+      url(http://themes.googleusercontent.com/static/fonts/sourcecodepro/v4/leqv3v-yTsJNC7nFznSMqTqaeNdu-yyoiSGhdizsIpU.woff) format('woff'),
+      url(/css/fonts/SourceSansPro/SourceCodePro-Medium.woff) format('woff');
+}
+
+@font-face {
+  font-family: 'Source Code Pro';
+  font-style: normal;
+  font-weight: 600;
+  src: local('Source Code Pro Semibold'), local('SourceCodePro-Semibold'),
+      url(http://themes.googleusercontent.com/static/fonts/sourcecodepro/v4/leqv3v-yTsJNC7nFznSMqQAD_zxmsR6vL1X3tnvCZYo.woff) format('woff'),
+      url(/css/fonts/SourceSansPro/SourceCodePro-Semibold.woff) format('woff');
+}
+
+@font-face {
+  font-family: 'Source Code Pro';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Source Code Pro Bold'), local('SourceCodePro-Bold'),
+      url(http://themes.googleusercontent.com/static/fonts/sourcecodepro/v4/leqv3v-yTsJNC7nFznSMqQE-U1AYRUXXE0Dth8uKIE0.woff) format('woff'),
+      url(/css/fonts/SourceSansPro/SourceCodePro-Bold.woff) format('woff');
+}

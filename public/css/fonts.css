@@ -1,5 +1,5 @@
-@import url(http://fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,600,600italic,700,700italic&subset=latin,cyrillic-ext,cyrillic,latin-ext);
-@import url(http://fonts.googleapis.com/css?family=Source+Code+Pro:400,500,600,700&subset=latin,latin-ext);
+import url(/css/fonts/OpenSans.css);
+import url(/css/fonts/SourceSansPro.css);
 
 body {
   font-family: 'Open Sans', 'Trebuchet MS', Helvetica, Verdana, sans-serif;
