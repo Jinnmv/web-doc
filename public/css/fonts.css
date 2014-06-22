@@ -1,5 +1,5 @@
-import url(/css/fonts/OpenSans.css);
-import url(/css/fonts/SourceSansPro.css);
+@import url(/css/fonts/OpenSans.css);
+@import url(/css/fonts/SourceSansPro.css);
 
 body {
   font-family: 'Open Sans', 'Trebuchet MS', Helvetica, Verdana, sans-serif;
