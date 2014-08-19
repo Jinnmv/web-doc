@@ -46,8 +46,8 @@ if ('production' == app.get('env')) {
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded());
     app.use(methodOverride());
-    app.use(favicon(path.join(__dirname, 'favicon.ico'), { maxAge: oneYear }));
     app.use(express.static(path.join(__dirname, 'public'), {maxAge: oneYear}));
+    app.use(favicon(path.join(__dirname, 'public', 'favicon.ico'), { maxAge: oneYear }));
     //app.use(app.router);  //deprecated in 4.x
     app.use(morgan('combined'));
     //app.use(express.errorHandler());  //deprecated in 4.x
@@ -60,9 +60,9 @@ if ('development' == app.get('env')) {
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded());
     app.use(methodOverride());
-    app.use(favicon(path.join(__dirname, 'favicon.ico')));
     //app.use(app.router);
     app.use(express.static(path.join(__dirname, 'public')));
+    app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
     //app.use(app.router);  // deprecated in 4.x
     app.use(errorHandler());
 };
