@@ -11,13 +11,13 @@
     "node": ">=0.10.x"
   },
   "dependencies": {
-    "express": "~3.4.7",
+    "express": "~3.4.x",
     "jade": "~1.3.0",
-    "marked": "*",
-    "highlight.js": "*",
-    "nconf": "~0.6.9",
-    "winston": "~0.7.2",
-    "async": "0.6.x"
+    "marked": "~0.3.x",
+    "highlight.js": "~8.x",
+    "nconf": "~0.6.x",
+    "winston": "~0.7.x",
+    "async": "~0.6.x"
   },
   "repository": {
     "type": "git",
