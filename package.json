@@ -11,16 +11,16 @@
     "node": ">=0.10.x"
   },
   "dependencies": {
-    "express": "~3.4.x",
-    "jade": "~1.3.0",
-    "marked": "~0.3.x",
-    "highlight.js": "~8.x",
-    "nconf": "~0.6.x",
-    "winston": "~0.7.x",
-    "async": "~0.6.x"
+    "express": "^3.4.x",
+    "jade": "^1.3.0",
+    "marked": "^0.3.x",
+    "highlight.js": "^8.x",
+    "nconf": "^0.6.x",
+    "winston": "^0.7.x",
+    "async": "^0.6.x"
   },
   "repository": {
     "type": "git",
-    "url": "git://git@github.com:Jinnmv/web-doc.git"
+    "url": "git://git@github.com:Jinnmv/webdoc.git"
   }
 }
