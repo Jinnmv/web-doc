@@ -67,7 +67,19 @@ Configuration example:
 
 * GET - read file by relative path
 * POST - create file/dir
-* PUT - update file
+  * fileName, fileText - create file;
+  * dirName - create directory;
+* PUT - update file;
+  * fileText - to be updated with;
+  * newFileName - not required. If present - will rename current file;
+
+response HTTP codes:
+* 200 OK
+* 201 Created - File/Dir has been successfully created;
+* 409 Conflict -  
+* 412 Precondition Failed - invalid input data format or missing;
+
+* 301 Moved Permanently - broswer redirect;
 
 ## Notes
 Update NPS with package.json: `npm install --save`

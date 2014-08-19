@@ -2,21 +2,27 @@
  * Module dependencies
  */
 
-var express = require('express');
-var fs = require('fs');
-var path = require('path');
+var express         = require('express');
+var path            = require('path');
+var bodyParser      = require('body-parser');
+var methodOverride  = require('method-override');   // Overrides PUT/DELETE
+var morgan          = require('morgan');            // Logger
+var favicon         = require('serve-favicon');     // Favicon
+var errorHandler    = require('errorhandler');      // Error Handler
+var compress        = require('compression');       // Compress
+//var fs            = require('fs');
+//var marked        = require('marked');
 
-var routes = require('./routes');
-var apiRoutes = require('./routes/api');
-//var docRoute = require('./routes/docRoute');
-var http = require('http');
-//var nconf = require('nconf');
-var config = require('./lib/config');
-var logger = require('./lib/logger');
-var dirContent = require('./lib/dirContent');
-var mdServer =require('./lib/mdServer');
-var marked = require('marked');
-var url = require('./lib/url');
+var routes          = require('./routes');
+var apiRoutes       = require('./routes/api');
+//var docRoute      = require('./routes/docRoute');
+var http            = require('http');
+//var nconf         = require('nconf');
+var config          = require('./lib/config');
+var logger          = require('./lib/logger');
+//var dirContent    = require('./lib/dirContent');
+//var mdServer      = require('./lib/mdServer');
+//var url           = require('./lib/url');
 
 
 var app = module.exports = express();
@@ -30,39 +36,43 @@ app.set('view engine', 'jade');
 app.set('strict routing');
 
 // production environment
-app.configure('production', function() {
-  var oneYear = 31557600000;
-  app.set('view cache');
-  app.use(express.json());
-  app.use(express.urlencoded());
-  app.use(express.compress());
-  app.use(express.methodOverride());
-  app.use(express.favicon(path.join(__dirname, 'favicon.ico'), { maxAge: oneYear }));
-  app.use(express.static(path.join(__dirname, 'public'), {maxAge: oneYear}));
-  app.use(app.router);
-  app.use(express.logger());
-  app.use(express.errorHandler());
-});
+if ('production' == app.get('env')) {
+    var oneYear = 31557600000;
+
+    app.set('view cache');
+    //app.use(express.json());
+    app.use(compress());
+    app.use(bodyParser());
+    app.use(bodyParser.json());
+    app.use(bodyParser.urlencoded());
+    app.use(methodOverride());
+    app.use(favicon(path.join(__dirname, 'favicon.ico'), { maxAge: oneYear }));
+    app.use(express.static(path.join(__dirname, 'public'), {maxAge: oneYear}));
+    //app.use(app.router);  //deprecated in 4.x
+    app.use(morgan('combined'));
+    //app.use(express.errorHandler());  //deprecated in 4.x
+}
 
 //development environment
-app.configure('development', function() {
-	app.use(express.logger('dev'));
-	app.use(express.json());
-	app.use(express.urlencoded());
-	app.use(express.methodOverride());
-	app.use(express.favicon(path.join(__dirname, 'favicon.ico')));
-	//app.use(app.router);
-	app.use(express.static(path.join(__dirname, 'public')));
-	app.use(app.router);
-	app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
-});
+if ('development' == app.get('env')) {
+    app.use(morgan('combined'));
+    app.use(bodyParser());
+    app.use(bodyParser.json());
+    app.use(bodyParser.urlencoded());
+    app.use(methodOverride());
+    app.use(favicon(path.join(__dirname, 'favicon.ico')));
+    //app.use(app.router);
+    app.use(express.static(path.join(__dirname, 'public')));
+    //app.use(app.router);  // deprecated in 4.x
+    app.use(errorHandler());
+};
 
 // Marked Configuration
-marked.setOptions({
+/*marked.setOptions({
 	highlight: function (code) {
 		return require('highlight.js').highlightAuto(code).value;
 	}
-});
+});*/
 
 var docDir = "doc"; // TODO put into config
 
@@ -110,11 +120,14 @@ app.use(function (req, res, next) {
 /**
  * API
  **/
-app.get(config.webServer.apiUrl + '*', apiRoutes.getDocument);
 
-app.post(config.webServer.apiUrl + '*', apiRoutes.createDocument);
+app.route(config.webServer.apiUrl + '*')
 
-app.put(config.webServer.apiUrl + '*', apiRoutes.updateDocument);
+    .get(apiRoutes.getDocument)
+
+    .post(apiRoutes.createDocument)
+
+    .put(apiRoutes.updateDocument);
 
 /**
  * Document Server routes

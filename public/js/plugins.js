@@ -24,6 +24,7 @@
 // Place any jQuery/helper plugins in here.
 
 (function( $ ) {
+
 	$.fn.showMessage = function(messageText) {
 		$( this ).before('<div class="message" id="notif" style="display:none">' + messageText + '</div>');
 		var $notif = $( '#notif' );

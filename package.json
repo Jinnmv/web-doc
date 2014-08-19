@@ -1,5 +1,5 @@
 {
-  "name": "web-doc",
+  "name": "webdoc",
   "author": "Anton Savenko <anton.a.savenko@gmail.com>",
   "description": "A simple wiki that uses markdown files",
   "version": "0.0.1",
@@ -11,13 +11,18 @@
     "node": ">=0.10.x"
   },
   "dependencies": {
-    "express": "^3.4.x",
-    "jade": "^1.3.0",
+    "express": "^4.x",
+    "jade": "^1.5.x",
     "marked": "^0.3.x",
     "highlight.js": "^8.x",
     "nconf": "^0.6.x",
     "winston": "^0.7.x",
-    "async": "^0.6.x"
+    "async": "^0.9.x",
+    "body-parser": "^1.x",
+    "method-override": "^2.x",
+    "morgan": "^1.x",
+    "serve-favicon": "^2.x",
+    "errorhandler": "^1.x"
   },
   "repository": {
     "type": "git",
